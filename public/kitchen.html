@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cozinha | Naquele Lugar</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || (user.Role !== 'Cozinha' && user.Role !== 'Admin')) {
+            window.location.href = 'login.html';
+        }
+    </script>
+</head>
+
+<body class="kitchen-view management-body">
+    <header class="mgmt-header">
+        <div class="container mgmt-nav">
+            <div class="logo">NAQUELE<span>COZINHA</span></div>
+            <a href="admin.html" class="link-nav">Painel Admin</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="ordersContainer" class="kitchen-grid">
+            <div class="loading">Carregando pedidos...</div>
+        </div>
+    </main>
+
+    <script src="dashboard.js"></script>
+</body>
+
+</html>
