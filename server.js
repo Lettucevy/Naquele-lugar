@@ -5,7 +5,6 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 require('dotenv').config();
-
 const app = express();
 const port = 8001;
 
@@ -50,11 +49,11 @@ const dbConfig = {
 
 let poolPromise = sql.connect(dbConfig)
     .then(pool => {
-        console.log('✅ CONEXÃO COM SQL SERVER ESTABELECIDA');
+        console.log('CONEXÃO COM SQL SERVER ESTABELECIDA');
         return pool;
     })
     .catch(err => {
-        console.error('❌ ERRO AO CONECTAR AO SQL SERVER:', err.message);
+        console.error('ERRO AO CONECTAR AO SQL SERVER:', err.message);
         return null;
     });
 

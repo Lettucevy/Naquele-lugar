@@ -18,7 +18,7 @@
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Inter', sans-serif;
     line-height: 1.6;
     overflow-x: hidden;
 }
@@ -53,6 +53,10 @@ nav {
     justify-content: space-between;
     align-items: center;
     width: 100%;
+}
+
+a {
+    padding-left: 20px;
 }
 
 .logo {
@@ -219,36 +223,51 @@ nav {
     transform: scale(1.1);
 }
 
+.item-info {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
 .item-header {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 10px;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 8px;
 }
 
 .item-header h3 {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
+    font-weight: 700;
 }
 
 .item-price {
     color: var(--accent-gold);
     font-weight: 700;
+    font-size: 1.1rem;
+    white-space: nowrap;
 }
 
 .item-desc {
     color: #999;
-    font-size: 0.9rem;
-    margin-bottom: 20px;
-    min-height: 40px;
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+    min-height: 45px;
+    line-height: 1.4;
 }
 
 .btn-add {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     border-radius: 10px;
     background: transparent;
     border: 1px solid var(--accent-red);
     color: var(--accent-red);
+    font-weight: 600;
 }
+
 
 .btn-add:hover {
     background: var(--accent-red);
@@ -453,7 +472,7 @@ footer {
     color: #888;
     padding: 10px 20px;
     cursor: pointer;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 600;
     transition: var(--transition);
     border-bottom: 2px solid transparent;

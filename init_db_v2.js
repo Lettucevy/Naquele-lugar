@@ -9,7 +9,7 @@ async function initialize() {
         console.log('--- INICIALIZANDO BANCO DE DADOS (V2) ---');
         console.log('Conectando ao SQL Server...');
         let pool = await sql.connect(dbConfig);
-        
+
         console.log('Selecionando banco NaqueleLugarDB...');
         await pool.request().query(`
             IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'NaqueleLugarDB')
@@ -46,12 +46,12 @@ async function initialize() {
             END
         `);
 
-        console.log('✅ BANCO DE DADOS PRONTO PARA RASTREAMENTO!');
+        console.log('BANCO DE DADOS PRONTO PARA RASTREAMENTO!');
         console.log('---');
         console.log('Acesse: http://localhost:8001/tracking.html');
         process.exit(0);
     } catch (err) {
-        console.error('❌ ERRO NA INICIALIZAÇÃO:', err.message);
+        console.error('ERRO NA INICIALIZAÇÃO:', err.message);
         process.exit(1);
     }
 }

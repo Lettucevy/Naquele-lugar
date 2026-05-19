@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const ordersResponse = await fetch('/api/admin/pedidos');
                 const orders = await ordersResponse.json();
                 renderOrders(orders);
-                
+
                 if (isAdmin && statsContainer) {
                     const statsResponse = await fetch('/api/admin/stats');
                     const stats = await statsResponse.json();
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- RENDERIZADORES ---
+    // RENDERIZADORES
 
     function renderOrders(orders) {
         if (!ordersContainer) return;
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    // --- AÇÕES GLOBAIS ---
+    // AÇÕES GLOBAIS
 
     window.openTab = (tabName) => {
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchData();
     };
 
-    // --- MODAIS ---
+    // MODAIS 
     window.closeModal = (id) => {
         const modal = document.getElementById(id);
         if (modal) {
@@ -233,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('prodImg').value = '';
         document.getElementById('imagePreview').innerHTML = '';
         document.getElementById('productModalTitle').innerText = 'Novo Produto';
-        
+
         const res = await fetch('/api/admin/categorias');
         const cats = await res.json();
         const catSelect = document.getElementById('prodCat');
@@ -259,23 +259,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (catSelect) {
             catSelect.innerHTML = cats.filter(c => c.Ativa).map(c => `<option value="${c.ID}" ${p.CategoriaID === c.ID ? 'selected' : ''}>${c.Nome}</option>`).join('');
         }
-        
+
         document.getElementById('prodNome').value = p.Nome;
         document.getElementById('prodDesc').value = p.Descricao;
         document.getElementById('prodPreco').value = p.Preco;
         document.getElementById('prodImg').value = p.ImagemURL || '';
-        
+
         if (p.ImagemURL) {
             document.getElementById('imagePreview').innerHTML = `<img src="${p.ImagemURL}" style="max-width:100%; border-radius:10px; margin-top:10px">`;
         } else {
             document.getElementById('imagePreview').innerHTML = '';
         }
-        
+
         if (titleField) titleField.innerText = 'Editar Produto';
         document.getElementById('productModal').style.display = 'flex';
     };
 
-    // --- UPLOAD LOGIC ---
+    // UPLOAD
     document.getElementById('prodImgFile')?.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -298,7 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- FORM SUBMITS ---
+    // FORM SUBMITS
     document.getElementById('categoryForm')?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const id = document.getElementById('catId').value;
