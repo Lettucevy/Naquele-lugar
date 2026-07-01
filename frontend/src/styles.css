@@ -95,7 +95,7 @@ a {
 
 .hero {
     height: 90vh;
-    background: url('img/hero.png') center/cover no-repeat;
+    background: url('/img/hero.png') center/cover no-repeat;
     display: flex;
     align-items: center;
     position: relative;
@@ -267,7 +267,6 @@ a {
     color: var(--accent-red);
     font-weight: 600;
 }
-
 
 .btn-add:hover {
     background: var(--accent-red);
@@ -623,7 +622,7 @@ td {
     background: #555;
 }
 
-.em.preparo {
+.em-preparo {
     background: var(--accent-orange);
 }
 

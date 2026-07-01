@@ -1,0 +1,59 @@
+<div class="tracking-container">
+    <header>
+        <h1>Rastrear Pedido</h1>
+        <p>Acompanhe o status da sua comida em tempo real</p>
+    </header>
+
+    <div class="search-box">
+        <div class="input-group">
+            <input type="text" [(ngModel)]="searchInput" (keyup.enter)="searchOrders()" placeholder="Digite o Nº do Pedido ou seu Telefone">
+            <button class="btn-search" (click)="searchOrders()">Buscar</button>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="results-container" [style.display]="loading() ? 'block' : 'none'">
+        <div class="empty-state">
+            <span class="spinner-icon">⏳</span>
+            <p>Buscando seu pedido...</p>
+        </div>
+    </div>
+
+    <!-- Results State -->
+    <div class="results-container" [style.display]="(!loading() && hasSearched()) ? 'block' : 'none'">
+        <!-- No orders found -->
+        <div class="empty-state" *ngIf="orders().length === 0">
+            <span class="empty-icon">📭</span>
+            <p>Nenhum pedido encontrado para "{{ searchInput() }}".</p>
+        </div>
+
+        <!-- Orders found -->
+        <div class="order-card" *ngFor="let order of orders()">
+            <div class="order-header">
+                <div>
+                    <span class="order-id">#{{ order.ID }}</span>
+                    <div class="order-date">{{ formatDate(order.DataPedido) }}</div>
+                </div>
+                <span class="status-badge" [ngClass]="getStatusClass(order.Status)">
+                    {{ order.Status }}
+                </span>
+            </div>
+            
+            <div class="order-details">
+                <div class="item-row" *ngFor="let item of order.Itens">
+                    <span>{{ item.Quantidade }}x {{ item.Nome }}</span>
+                    <span>R$ {{ (item.Quantidade * item.PrecoUnitario).toFixed(2) }}</span>
+                </div>
+            </div>
+
+            <div class="total-row">
+                <span>Total</span>
+                <span>R$ {{ order.Total.toFixed(2) }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="back-link">
+        <a routerLink="/"><span class="arrow-back">←</span> Voltar para o Cardápio</a>
+    </div>
+</div>

@@ -1,0 +1,94 @@
+<header>
+    <nav class="container">
+        <div class="logo">NAQUELE<span>LUGAR</span></div>
+        <div style="display: flex; align-items: center; gap: 2rem;">
+            <a routerLink="/tracking" class="link-nav"
+                style="text-decoration:none; color:white; font-size:0.9rem; font-weight:600; padding-left:0;">Rastrear
+                Pedido</a>
+            <div class="cart-trigger" (click)="toggleCart(true)">
+                <span class="cart-icon">🛒</span>
+                <span class="cart-count">{{ cartService.count() }}</span>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main>
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <h1>Sabores Orientais, <br><span>Espírito de Rua.</span></h1>
+            <p>O autêntico Izakaya bar no coração da cidade. Experimente a fusão perfeita entre tradição e modernidade.
+            </p>
+            <a href="#menu" class="btn">Explorar Cardápio</a>
+        </div>
+    </section>
+
+    <section id="menu" class="container">
+        <div class="section-title">
+            <h2>Nosso Cardápio</h2>
+            <div class="category-filter">
+                <button *ngFor="let cat of categories()" [class.active]="selectedCategory() === cat"
+                    (click)="selectCategory(cat)">
+                    {{ cat }}
+                </button>
+            </div>
+        </div>
+
+        <div class="menu-grid">
+            <div class="menu-item" *ngFor="let item of filteredItems()">
+                <div class="item-img">
+                    <img [src]="item.ImagemURL || 'https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?q=80&w=400&auto=format&fit=crop'"
+                        (error)="$any($event.target).src='https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?q=80&w=400&auto=format&fit=crop'"
+                        [alt]="item.Nome">
+                </div>
+                <div class="item-info">
+                    <div class="item-header">
+                        <h3>{{ item.Nome }}</h3>
+                        <span class="item-price">R$ {{ item.Preco.toFixed(2) }}</span>
+                    </div>
+                    <p class="item-desc">{{ item.Descricao }}</p>
+                    <button class="btn btn-add" (click)="addToCart(item)">Adicionar ao Pedido</button>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div class="cart-sidebar" [class.open]="cartOpen()">
+    <div class="cart-header">
+        <h3>Seu Pedido</h3>
+        <button id="closeCart" (click)="toggleCart(false)">&times;</button>
+    </div>
+    <div class="cart-items">
+        <div class="cart-item" *ngFor="let item of cartService.items()">
+            <div class="cart-item-info">
+                <h4>{{ item.nome }}</h4>
+                <span>{{ item.quantidade }}x R$ {{ item.preco.toFixed(2) }}</span>
+            </div>
+            <button class="btn-remove" (click)="cartService.removeFromCart(item.id)">🗑️</button>
+        </div>
+    </div>
+    <div class="cart-footer">
+        <div class="total">Total: <span>R$ {{ cartService.total().toFixed(2) }}</span></div>
+        <button class="btn btn-checkout" (click)="openCheckout()">Finalizar Pedido</button>
+    </div>
+</div>
+
+<div class="modal" [style.display]="checkoutOpen() ? 'flex' : 'none'">
+    <div class="modal-content">
+        <h3>Finalizar Pedido</h3>
+        <form (ngSubmit)="submitOrder()">
+            <input type="text" name="clientName" [(ngModel)]="clientName" placeholder="Seu Nome" required>
+            <input type="tel" name="clientPhone" [(ngModel)]="clientPhone" placeholder="Telefone (WhatsApp)" required>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline" (click)="closeCheckout()">Voltar</button>
+                <button type="submit" class="btn">Confirmar Pedido</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer class="container">
+    <p>&copy; 2026 Naquele Lugar - Izakaya Bar. Todos os direitos reservados.</p>
+</footer>

@@ -1,0 +1,68 @@
+<header class="mgmt-header">
+    <div class="container mgmt-nav">
+        <div class="logo">NAQUELE<span style="margin-right: 20px;">COZINHA</span></div>
+        <div class="nav-actions" style="display: flex; gap: 20px; align-items: center;">
+            <a *ngIf="authService.isAdmin()" routerLink="/admin" class="link-nav" style="padding-left:0;">Painel
+                Admin</a>
+            <button (click)="authService.logout()" class="btn btn-sm btn-outline">Sair</button>
+        </div>
+    </div>
+</header>
+
+<main class="container" style="margin-top: 100px;">
+    <div class="kitchen-grid">
+        <!-- Para Preparar Column -->
+        <div class="col">
+            <h2 class="col-title">Para Preparar 🛠️</h2>
+            <div class="orders-list">
+                <div *ngIf="pendingOrders().length === 0" class="empty-state"
+                    style="padding: 2rem 0; text-align: left;">
+                    <p>Nenhum pedido pendente! Bom trabalho! 🎉</p>
+                </div>
+                <div [class]="getOrderClass(order.Status)" *ngFor="let order of pendingOrders()">
+                    <div class="card-header">
+                        <span>#{{ order.ID }}</span>
+                        <span>{{ formatTime(order.DataPedido) }}</span>
+                    </div>
+                    <div class="card-client">{{ order.NomeCliente }}</div>
+                    <div class="card-items">
+                        <div class="item-line" *ngFor="let item of order.Itens">
+                            <span class="item-qty">{{ item.Quantidade }}x</span>
+                            <span>{{ item.Nome }}</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button *ngIf="order.Status === 'Pendente'" class="btn btn-sm"
+                            (click)="setStatus(order.ID, 'Em Preparo')">Começar</button>
+                        <button *ngIf="order.Status === 'Em Preparo'" class="btn btn-sm btn-green"
+                            (click)="setStatus(order.ID, 'Concluído')">Finalizar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Finalizados Column -->
+        <div class="col">
+            <h2 class="col-title">Finalizados ✅</h2>
+            <div class="orders-list">
+                <div *ngIf="finishedOrders().length === 0" class="empty-state"
+                    style="padding: 2rem 0; text-align: left;">
+                    <p>Nenhum pedido concluído recentemente.</p>
+                </div>
+                <div [class]="getOrderClass(order.Status)" *ngFor="let order of finishedOrders()">
+                    <div class="card-header">
+                        <span>#{{ order.ID }}</span>
+                        <span>{{ formatTime(order.DataPedido) }}</span>
+                    </div>
+                    <div class="card-client">{{ order.NomeCliente }}</div>
+                    <div class="card-items">
+                        <div class="item-line" *ngFor="let item of order.Itens">
+                            <span class="item-qty">{{ item.Quantidade }}x</span>
+                            <span>{{ item.Nome }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

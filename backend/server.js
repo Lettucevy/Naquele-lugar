@@ -10,7 +10,20 @@ const port = 8001;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Servir frontend Angular buildado
+const frontendDist = path.join(__dirname, '..', 'frontend', 'dist', 'frontend', 'browser');
+const indexHtml = path.join(frontendDist, 'index.html');
+app.use((req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) return next();
+    const filePath = path.join(frontendDist, req.path.replace(/^\//, ''));
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+        res.sendFile(filePath);
+    } else {
+        res.sendFile(indexHtml);
+    }
+});
 
 // Middleware de Log de Requisições
 app.use((req, res, next) => {
@@ -20,7 +33,7 @@ app.use((req, res, next) => {
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const uploadPath = path.join(__dirname, 'public', 'uploads');
+        const uploadPath = path.join(__dirname, 'uploads');
         if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath, { recursive: true });
         cb(null, uploadPath);
     },

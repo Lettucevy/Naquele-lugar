@@ -1,0 +1,240 @@
+<header class="mgmt-header">
+    <div class="container mgmt-nav">
+        <div class="logo">NAQUELE<span style="margin-right: 20px;">ADMIN</span></div>
+        <nav class="tabs">
+            <button class="tab-link" [class.active]="activeTab() === 'orders'"
+                (click)="setTab('orders')">Pedidos</button>
+            <button class="tab-link" [class.active]="activeTab() === 'products'"
+                (click)="setTab('products')">Produtos</button>
+            <button class="tab-link" [class.active]="activeTab() === 'categories'"
+                (click)="setTab('categories')">Categorias</button>
+            <a routerLink="/" class="link-nav"
+                style="padding-left:0; text-decoration:none; margin-right: 20px;">Cardápio</a>
+        </nav>
+        <a routerLink="/kitchen" class="link-nav" style="padding-left:0; text-decoration:none;">Modo Cozinha</a>
+    </div>
+</header>
+
+<main class="container" style="margin-top: 40px; padding-bottom: 60px;">
+    <!-- ORDERS TAB -->
+    <div id="ordersTab" class="tab-content" [class.active]="activeTab() === 'orders'">
+        <section class="stats-section">
+            <h2>Visão Geral de Hoje</h2>
+            <div id="statsContainer" class="stats-grid">
+                <div class="stat-card" *ngIf="stats()">
+                    <div class="stat-val">R$ {{ stats()?.totalVendas?.toFixed(2) }}</div>
+                    <div class="stat-label">Vendas Totais</div>
+                </div>
+                <div class="stat-card" *ngIf="stats()">
+                    <div class="stat-val">{{ stats()?.qtdPedidos }}</div>
+                    <div class="stat-label">Pedidos</div>
+                </div>
+                <!-- Top items listing as nice sub-metric -->
+                <div class="stat-card" *ngIf="stats() && stats()!.topItens.length > 0"
+                    style="grid-column: span 2; text-align: left; padding: 20px 30px;">
+                    <div class="stat-label" style="margin-bottom: 10px; font-weight: 800; font-size: 0.9rem;">Mais
+                        Vendidos 🔥</div>
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        <div *ngFor="let item of stats()!.topItens; let i = index"
+                            style="display:flex; justify-content:space-between; font-size:1.1rem;">
+                            <span>{{ i+1 }}. {{ item.Nome }}</span>
+                            <span style="color:var(--accent-orange); font-weight:800;">{{ item.Qtd }}x</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="management-section" style="margin-top: 40px;">
+            <h2>Gestão de Pedidos</h2>
+            <div id="ordersContainer" class="table-container">
+                <div *ngIf="orders().length === 0" style="text-align:center; padding: 2rem; color:#888;">
+                    Nenhum pedido encontrado.
+                </div>
+                <table *ngIf="orders().length > 0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Data</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let order of orders()">
+                            <td>#{{ order.ID }}</td>
+                            <td>{{ order.NomeCliente }}</td>
+                            <td>{{ formatDate(order.DataPedido) }}</td>
+                            <td>R$ {{ order.Total.toFixed(2) }}</td>
+                            <td>
+                                <span class="status-badge" [ngClass]="getStatusClass(order.Status)">
+                                    {{ order.Status }}
+                                </span>
+                            </td>
+                            <td>
+                                <select [ngModel]="order.Status"
+                                    (change)="updateOrderStatus(order.ID, $any($event.target).value)">
+                                    <option value="Pendente">Pendente</option>
+                                    <option value="Em Preparo">Em Preparo</option>
+                                    <option value="Concluído">Concluído</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- PRODUCTS TAB -->
+    <div id="productsTab" class="tab-content" [class.active]="activeTab() === 'products'">
+        <section class="management-section">
+            <div class="section-header">
+                <h2>Gestão de Produtos</h2>
+                <button class="btn btn-sm" (click)="openProductModal()">+ Novo Produto</button>
+            </div>
+            <div id="productsContainer" class="table-container">
+                <div *ngIf="products().length === 0" style="text-align:center; padding: 2rem; color:#888;">
+                    Nenhum produto cadastrado.
+                </div>
+                <table *ngIf="products().length > 0">
+                    <thead>
+                        <tr>
+                            <th>Foto</th>
+                            <th>Nome</th>
+                            <th>Categoria</th>
+                            <th>Preço</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let p of products()" [class.inactive-row]="!p.Disponivel">
+                            <td>
+                                <img [src]="p.ImagemURL || 'https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?q=80&w=400&auto=format&fit=crop'"
+                                    (error)="$any($event.target).src='https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?q=80&w=400&auto=format&fit=crop'"
+                                    width="50" height="50" style="object-fit:cover; border-radius:5px">
+                            </td>
+                            <td style="font-weight: 600;">{{ p.Nome }}</td>
+                            <td>{{ p.CategoriaNome }}</td>
+                            <td style="color: var(--accent-gold); font-weight: 700;">R$ {{ p.Preco.toFixed(2) }}</td>
+                            <td>
+                                <span class="status-badge" [class.concluido]="p.Disponivel"
+                                    [class.pendente]="!p.Disponivel">
+                                    {{ p.Disponivel ? 'Ativo' : 'Pausado' }}
+                                </span>
+                            </td>
+                            <td>
+                                <div style="display:flex; gap:8px;">
+                                    <button class="btn btn-sm btn-outline" (click)="openProductModal(p)">Editar</button>
+                                    <button class="btn btn-sm" [class.btn-red]="p.Disponivel"
+                                        [class.btn-green]="!p.Disponivel" (click)="toggleProduct(p.ID, p.Disponivel)">
+                                        {{ p.Disponivel ? 'Pausar' : 'Ativar' }}
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- CATEGORIES TAB -->
+    <div id="categoriesTab" class="tab-content" [class.active]="activeTab() === 'categories'">
+        <section class="management-section">
+            <div class="section-header">
+                <h2>Gestão de Categorias</h2>
+                <button class="btn btn-sm" (click)="openCategoryModal()">+ Nova Categoria</button>
+            </div>
+            <div id="categoriesContainer" class="table-container">
+                <div *ngIf="categories().length === 0" style="text-align:center; padding: 2rem; color:#888;">
+                    Nenhuma categoria cadastrada.
+                </div>
+                <table *ngIf="categories().length > 0" style="max-width: 600px">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let c of categories()" [class.inactive-row]="!c.Ativa">
+                            <td style="font-weight: 600; font-size: 1.1rem;">{{ c.Nome }}</td>
+                            <td>
+                                <span class="status-badge" [class.concluido]="c.Ativa" [class.pendente]="!c.Ativa">
+                                    {{ c.Ativa ? 'Ativa' : 'Inativa' }}
+                                </span>
+                            </td>
+                            <td>
+                                <div style="display:flex; gap:8px;">
+                                    <button class="btn btn-sm btn-outline"
+                                        (click)="openCategoryModal(c)">Renomear</button>
+                                    <button class="btn btn-sm" [class.btn-red]="c.Ativa" [class.btn-green]="!c.Ativa"
+                                        (click)="toggleCategory(c.ID, c.Ativa)">
+                                        {{ c.Ativa ? 'Desativar' : 'Reativar' }}
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</main>
+
+<!-- PRODUCT MODAL -->
+<div class="modal" [style.display]="productModalOpen() ? 'flex' : 'none'">
+    <div class="modal-content">
+        <h3>{{ productModalTitle() }}</h3>
+        <form (ngSubmit)="submitProduct()">
+            <select [(ngModel)]="prodCat" name="prodCat" required>
+                <option value="0" disabled>Selecione uma Categoria</option>
+                <option *ngFor="let cat of categories()" [value]="cat.ID">{{ cat.Nome }}</option>
+            </select>
+
+            <input type="text" [(ngModel)]="prodNome" name="prodNome" placeholder="Nome do Produto" required>
+            <textarea [(ngModel)]="prodDesc" name="prodDesc" placeholder="Descrição"></textarea>
+            <input type="number" [(ngModel)]="prodPreco" name="prodPreco" placeholder="Preço (Ex: 15.00)" step="0.01"
+                required>
+
+            <div class="file-upload">
+                <label for="prodImgFile" class="btn btn-outline"
+                    style="width:100%; display:block; cursor:pointer; text-align:center;">
+                    📷 Selecionar Foto do Computador
+                </label>
+                <input type="file" id="prodImgFile" (change)="onFileSelected($event)" accept="image/*"
+                    style="display:none">
+
+                <div class="image-preview">
+                    <span *ngIf="uploading()">Subindo...</span>
+                    <img *ngIf="!uploading() && prodImg()" [src]="prodImg()"
+                        style="max-width:100%; border-radius:10px; margin-top:10px">
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline" (click)="closeProductModal()">Cancelar</button>
+                <button type="submit" class="btn">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- CATEGORY MODAL -->
+<div class="modal" [style.display]="categoryModalOpen() ? 'flex' : 'none'">
+    <div class="modal-content">
+        <h3>{{ categoryModalTitle() }}</h3>
+        <form (ngSubmit)="submitCategory()">
+            <input type="text" [(ngModel)]="catNome" name="catNome" placeholder="Nome da Categoria" required>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline" (click)="closeCategoryModal()">Cancelar</button>
+                <button type="submit" class="btn">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
